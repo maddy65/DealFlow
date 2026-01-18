@@ -1,1 +1,1 @@
-loginhello
+export { default } from './login.jsx'

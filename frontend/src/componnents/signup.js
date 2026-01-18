@@ -1,1 +1,1 @@
-hello signup
+export { default } from './signup.jsx'
