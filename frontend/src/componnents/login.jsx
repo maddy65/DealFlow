@@ -1,28 +1,46 @@
-import React, {useState} from 'react'
-import styles from './signup.module.css'
+import React, { useState } from "react";
+import styles from "./signup.module.css";
 
-export default function Login({onToggle}){
-  const [form, setForm] = useState({email:'',password:''})
-  const [errors, setErrors] = useState({})
+const API_BASE = "http://localhost:4000/api";
 
-  function handleChange(e){
-    const {name,value} = e.target
-    setForm(prev => ({...prev,[name]:value}))
+export default function Login({ onToggle, onLogin }) {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function validate(){
-    const errs = {}
-    if(!form.email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) errs.email = 'Enter a valid email.'
-    if(form.password.length < 6) errs.password = 'Enter your password (min 6 characters).'
-    setErrors(errs)
-    return Object.keys(errs).length === 0
+  function validate() {
+    const errs = {};
+    if (!form.email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) errs.email = "Enter a valid email.";
+    if (form.password.length < 6) errs.password = "Enter your password (min 6 characters).";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   }
 
-  function handleSubmit(e){
-    e.preventDefault()
-    if(!validate()) return
-    console.log('Login', {...form})
-    alert('Login submitted — integrate with your backend.')
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!validate()) return;
+    setServerError("");
+
+    try {
+      const response = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setServerError(result.error || "Unable to login.");
+        return;
+      }
+      onLogin(result);
+    } catch (err) {
+      setServerError("Unable to connect to the server.");
+    }
   }
 
   return (
@@ -32,7 +50,7 @@ export default function Login({onToggle}){
           <div className={styles.brand}>
             <div className={styles.logo}>DF</div>
             <div>
-              <div style={{fontWeight:700,color:'#e6eef8'}}>DealFlow</div>
+              <div style={{ fontWeight: 700, color: "#e6eef8" }}>DealFlow</div>
               <div className={styles.small}>Organize. Track. Grow.</div>
             </div>
           </div>
@@ -54,16 +72,17 @@ export default function Login({onToggle}){
             <input name="password" type="password" value={form.password} onChange={handleChange} className={styles.input} placeholder="Password" aria-label="Password" />
             {errors.password && <div className={styles.error}>{errors.password}</div>}
 
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-              <label className={styles.checkboxRow}><input type="checkbox" /> <span style={{marginLeft:8}}>Remember me</span></label>
-              <button type="button" style={{background:'none',border:'none',color:'#9fb3cf',cursor:'pointer'}}>Forgot?</button>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <label className={styles.checkboxRow}><input type="checkbox" /> <span style={{ marginLeft: 8 }}>Remember me</span></label>
+              <button type="button" style={{ background: "none", border: "none", color: "#9fb3cf", cursor: "pointer" }}>Forgot?</button>
             </div>
 
+            {serverError && <div className={styles.error}>{serverError}</div>}
             <button type="submit" className={styles.submit}>Sign in</button>
-            <div className={styles.footer}>Don't have an account? <button type="button" onClick={() => onToggle && onToggle('signup')} style={{background:'none',border:'none',color:'#cfefff',fontWeight:700,cursor:'pointer',padding:0}}>Sign up</button></div>
+            <div className={styles.footer}>Don't have an account? <button type="button" onClick={() => onToggle && onToggle("signup")} style={{ background: "none", border: "none", color: "#cfefff", fontWeight: 700, cursor: "pointer", padding: 0 }}>Sign up</button></div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

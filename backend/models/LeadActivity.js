@@ -18,7 +18,7 @@ const LeadActivitySchema = new mongoose.Schema(
 
     action: {
       type: String,
-      enum: ["CREATED", "UPDATED", "ASSIGNED", "STATUS_CHANGED"],
+      enum: ["CREATED", "UPDATED", "ASSIGNED", "STATUS_CHANGED", "NOTE_ADDED", "STAGE_CHANGED", "CANCELLED"],
       required: true,
     },
 

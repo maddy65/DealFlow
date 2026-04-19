@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import Auth from "./componnents/auth";
+import DashboardLayout from "./componnents/DashboardLayout";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [token, setToken] = useState(localStorage.getItem("dealflowToken"));
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("dealflowUser");
+    return stored ? JSON.parse(stored) : null;
+  });
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  useEffect(() => {
+    const storedToken = localStorage.getItem("dealflowToken");
+    const storedUser = localStorage.getItem("dealflowUser");
+    if (storedToken) setToken(storedToken);
+    if (storedUser) setUser(JSON.parse(storedUser));
+  }, []);
+
+  function handleLogin({ token, user }) {
+    localStorage.setItem("dealflowToken", token);
+    localStorage.setItem("dealflowUser", JSON.stringify(user));
+    setToken(token);
+    setUser(user);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("dealflowToken");
+    localStorage.removeItem("dealflowUser");
+    setToken(null);
+    setUser(null);
+  }
+
+  return token ? (
+    <DashboardLayout token={token} user={user} onLogout={handleLogout} />
+  ) : (
+    <Auth onLogin={handleLogin} />
+  );
 }
 
 export default App

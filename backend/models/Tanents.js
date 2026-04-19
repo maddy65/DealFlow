@@ -22,8 +22,8 @@ const TenantSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["ACTIVE", "SUSPENDED"],
-      default: "ACTIVE",
+      enum: ["PENDING", "ACTIVE", "SUSPENDED"],
+      default: "PENDING",
     },
   },
   { timestamps: true }
