@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/dealflow";
 
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174"] }));
+app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174", "https://deal-flow-kohl.vercel.app"] }));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
