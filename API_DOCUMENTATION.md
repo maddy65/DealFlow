@@ -532,3 +532,13 @@ Then users can login with their email/password.
 | **USER** | Create/view leads |
 
 ---
+
+
+Maddy@Kola.com 
+
+Tenetat :   
+    Kola 
+
+    {"name":"Kola","slug":"","admin":{"name":"Alex Bob","email":"alex@kola.com","password":"Alex@123"}}
+
+    
